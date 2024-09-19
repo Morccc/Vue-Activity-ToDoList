@@ -1,12 +1,15 @@
 <template>
   <v-app>
     <v-container></v-container>
-    <v-container class="bg-overall">
-      
+    <v-container class="bg-overall vh-100">
       <v-row>
         <v-col>
           <h1 class="text-center font-weight-bold pt-3">TO DO LIST</h1>
           <h3 class="text-center pb-3">By Marc Ybiernas</h3>
+
+          <div class="text-center pb-3">
+            <v-btn @click="openSchedule" color="info" small>View My Schedule</v-btn>
+          </div>
 
           <h3>Input Task/s Here:</h3>
           <v-text-field
@@ -27,7 +30,6 @@
           <v-list-item v-for="(task, index) in tasks" :key="index">
             <v-list-item-content>
               <v-list-item-title>
-
                 <v-text-field
                   v-model="task.text"
                   :disabled="!task.editing"
@@ -35,37 +37,61 @@
                   maxlength="30"
                 ></v-text-field>
 
+                <!-- Time display directly below the task text -->
+                <div class="text-white">
+                  <small>Added: {{ task.addedTime }}</small><br />
+                  <small v-if="task.updatedTime">Updated: {{ task.updatedTime }}</small>
+                </div>
                 <v-btn @click="toggleEdit(index)" color="green">
                   {{ task.editing ? 'Save' : 'Edit Task' }}
                 </v-btn>
 
                 <v-btn @click="deleteTask(index)" color="red">Delete</v-btn>
-
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
       </v-list>
+
+      <v-dialog v-model="scheduleDialog" max-width="2000px">
+      <v-card class="text-center">
+        <v-card-title class="text-h5 text-center">My Current Schedule</v-card-title>
+        <v-card-text style="overflow-y: auto; max-height: 700px;">
+          <v-img :src="scheduleImage" aspect-ratio="1.7" contain></v-img>
+        </v-card-text>
+        <v-card-actions class="justify-center"> <!-- Use 'justify-center' class -->
+          <v-btn @click="scheduleDialog = false" color="primary">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
     </v-container>
   </v-app>
 </template>
 
-
-
-
-
 <script>
+import scheduleImage from '@/assets/schedule.png'; 
+
 export default {
   data() {
     return {
       newTask: '',
       tasks: [],
+      scheduleDialog: false,
+      scheduleImage: scheduleImage, 
     };
   },
   methods: {
     addTask() {
       if (this.newTask.trim()) {
-        this.tasks.push({ text: this.newTask, editing: false });
+        const currentTime = new Date().toLocaleString();
+        this.tasks.push({ 
+          text: this.newTask, 
+          editing: false, 
+          addedTime: currentTime, 
+          updatedTime: null 
+        });
         this.newTask = '';
       }
     },
@@ -75,23 +101,20 @@ export default {
     toggleEdit(index) {
       const task = this.tasks[index];
       if (task.editing) {
-        // Save the task directly when exiting edit mode
+        task.updatedTime = new Date().toLocaleString();
         task.editing = false;
       } else {
-        // Enter edit mode
         task.editing = true;
       }
+    },
+    openSchedule() {
+      this.scheduleDialog = true;
     },
   },
 };
 </script>
 
-
-
-
 <style>
-
-
 .bg-overall {
   background-color: #ECDFCC;
   border-radius: 15px;
@@ -122,8 +145,6 @@ export default {
   font-size: 1.2em !important;
 }
 
-
-
 .v-row {
   padding-bottom: 10px;
 }
@@ -132,8 +153,4 @@ export default {
   margin-top: 10px;
   margin-right: 10px;
 }
-
-
-
-
 </style>
