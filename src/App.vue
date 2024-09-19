@@ -29,38 +29,37 @@
           <v-list-item v-for="(task, index) in tasks" :key="index">
             <v-list-item-content>
               <v-list-item-title>
-              <div class="d-flex align-center">
+                <div class="d-flex flex-column task-wrapper">
+                  <div class="d-flex align-center mb-2 task-container">
+                    <v-checkbox
+                      v-model="task.completed"
+                      @change="toggleCompletion(index)"
+                      color="green"
+                      class="checkbox-custom"
+                    ></v-checkbox>
+                    <v-text-field
+                      v-model="task.text"
+                      :disabled="!task.editing"
+                      class="custom-text-field-list"
+                      maxlength="30"
+                      style="flex: 1; margin-left: 10px;"
+                    ></v-text-field>
+                  </div>
+                  
+                  <div class="text-center">
+                    <v-btn @click="toggleEdit(index)" color="green" class="mr-2">
+                      {{ task.editing ? 'Save' : 'Edit Task' }}
+                    </v-btn>
+                    <v-btn @click="deleteTask(index)" color="red">Delete</v-btn>
+                  </div>
 
-                <v-checkbox
-                v-model="task.completed"
-                @change="toggleCompletion(index)"
-                color="green"
-                class="checkbox-custom"
-                ></v-checkbox>
-
-
-                <v-text-field
-                  v-model="task.text"
-                  :disabled="!task.editing"
-                  class="custom-text-field-list"
-                  maxlength="30"
-                  style="flex: 1; margin-left: 10px;"
-                ></v-text-field>
-
-                <v-btn @click="toggleEdit(index)" color="green" class="ml-2">
-                  {{ task.editing ? 'Save' : 'Edit Task' }}
-                </v-btn>
-                
-                <v-btn @click="deleteTask(index)" color="red" class="ml-2">Delete</v-btn>
-              </div>
-
-              <div class="text-white mt-2">
-                <small>Added: {{ task.addedTime }}</small><br />
-                <small v-if="task.updatedTime">Updated: {{ task.updatedTime }}</small><br />
-                <small v-if="task.completedTime">Completed: {{ task.completedTime }}</small>
-              </div>
-            </v-list-item-title>
-
+                  <div class="text-white mt-2">
+                    <small>Added: {{ task.addedTime }}</small><br />
+                    <small v-if="task.updatedTime">Updated: {{ task.updatedTime }}</small><br />
+                    <small v-if="task.completedTime">Completed: {{ task.completedTime }}</small>
+                  </div>
+                </div>
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -80,9 +79,6 @@
     </v-container>
   </v-app>
 </template>
-
-
-
 
 <script>
 import scheduleImage from '@/assets/schedule.png'; 
@@ -138,7 +134,6 @@ export default {
 };
 </script>
 
-
 <style>
 .bg-overall {
   background-color: transparent;
@@ -147,8 +142,6 @@ export default {
   min-height: 100vh;
   height: auto; 
 }
-
-
 
 .v-list-item {
   margin-bottom: 10px;
@@ -174,6 +167,7 @@ export default {
   font-weight: bold;
   border-radius: 10px;
   font-size: 1.2em !important;
+  flex: 1;
 }
 
 .v-row {
@@ -185,28 +179,23 @@ export default {
   margin-right: 10px;
 }
 
-
-
 .checkbox-custom {
-  display: flex; /* Ensures it only wraps the checkbox */
-  border: 2px solid white; /* White outline */
-  background-color: white; /* Set to transparent */
-  border-radius: 10%; /* Full circular radius */
-  
+  display: flex; 
+  border: 2px solid white;
+  background-color: white; 
+  border-radius: 10%; 
+}
+
+.task-wrapper {
+  overflow-x: auto; /* Allow horizontal scrolling */
+  white-space: nowrap; /* Prevent line breaks */
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+.task-container {
+  display: flex;
+  align-items: center;
+  min-width: 100%; /* Ensures it takes up enough space to trigger scrolling */
+}
 
 </style>
