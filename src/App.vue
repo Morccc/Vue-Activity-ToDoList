@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    <v-container></v-container>
     <v-container class="bg-overall vh-100">
       <v-row>
         <v-col>
@@ -30,45 +29,60 @@
           <v-list-item v-for="(task, index) in tasks" :key="index">
             <v-list-item-content>
               <v-list-item-title>
+              <div class="d-flex align-center">
+
+                <v-checkbox
+                v-model="task.completed"
+                @change="toggleCompletion(index)"
+                color="green"
+                class="checkbox-custom"
+                ></v-checkbox>
+
+
                 <v-text-field
                   v-model="task.text"
                   :disabled="!task.editing"
                   class="custom-text-field-list"
                   maxlength="30"
+                  style="flex: 1; margin-left: 10px;"
                 ></v-text-field>
 
-                <!-- Time display directly below the task text -->
-                <div class="text-white">
-                  <small>Added: {{ task.addedTime }}</small><br />
-                  <small v-if="task.updatedTime">Updated: {{ task.updatedTime }}</small>
-                </div>
-                <v-btn @click="toggleEdit(index)" color="green">
+                <v-btn @click="toggleEdit(index)" color="green" class="ml-2">
                   {{ task.editing ? 'Save' : 'Edit Task' }}
                 </v-btn>
+                
+                <v-btn @click="deleteTask(index)" color="red" class="ml-2">Delete</v-btn>
+              </div>
 
-                <v-btn @click="deleteTask(index)" color="red">Delete</v-btn>
-              </v-list-item-title>
+              <div class="text-white mt-2">
+                <small>Added: {{ task.addedTime }}</small><br />
+                <small v-if="task.updatedTime">Updated: {{ task.updatedTime }}</small><br />
+                <small v-if="task.completedTime">Completed: {{ task.completedTime }}</small>
+              </div>
+            </v-list-item-title>
+
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
       </v-list>
 
       <v-dialog v-model="scheduleDialog" max-width="2000px">
-      <v-card class="text-center">
-        <v-card-title class="text-h5 text-center">My Current Schedule</v-card-title>
-        <v-card-text style="overflow-y: auto; max-height: 700px;">
-          <v-img :src="scheduleImage" aspect-ratio="1.7" contain></v-img>
-        </v-card-text>
-        <v-card-actions class="justify-center"> <!-- Use 'justify-center' class -->
-          <v-btn @click="scheduleDialog = false" color="primary">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-
+        <v-card class="text-center">
+          <v-card-title class="text-h5 text-center">My Current Schedule</v-card-title>
+          <v-card-text style="overflow-y: auto; max-height: 700px;">
+            <v-img :src="scheduleImage" aspect-ratio="1.7" contain></v-img>
+          </v-card-text>
+          <v-card-actions class="justify-center">
+            <v-btn @click="scheduleDialog = false" color="primary">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </v-app>
 </template>
+
+
+
 
 <script>
 import scheduleImage from '@/assets/schedule.png'; 
@@ -90,7 +104,9 @@ export default {
           text: this.newTask, 
           editing: false, 
           addedTime: currentTime, 
-          updatedTime: null 
+          updatedTime: null,
+          completed: false,
+          completedTime: null,
         });
         this.newTask = '';
       }
@@ -107,6 +123,14 @@ export default {
         task.editing = true;
       }
     },
+    toggleCompletion(index) {
+      const task = this.tasks[index];
+      if (task.completed) {
+        task.completedTime = new Date().toLocaleString();
+      } else {
+        task.completedTime = null;
+      }
+    },
     openSchedule() {
       this.scheduleDialog = true;
     },
@@ -114,11 +138,15 @@ export default {
 };
 </script>
 
+
 <style>
 .bg-overall {
-  background-color: #ECDFCC;
+  background-color: transparent;
+  border: 5px solid black;
   border-radius: 15px;
+  height: 100vh;
 }
+
 
 .v-list-item {
   margin-bottom: 10px;
@@ -132,6 +160,7 @@ export default {
 
 .v-list {
   padding-top: 10px;
+  margin-top: 10px;
   background-color: #3C3D37;
   border-radius: 10px;
 }
@@ -153,4 +182,29 @@ export default {
   margin-top: 10px;
   margin-right: 10px;
 }
+
+
+
+.checkbox-custom {
+  display: flex; /* Ensures it only wraps the checkbox */
+  border: 2px solid white; /* White outline */
+  background-color: white; /* Set to transparent */
+  border-radius: 10%; /* Full circular radius */
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>
