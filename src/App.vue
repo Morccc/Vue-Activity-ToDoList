@@ -144,8 +144,10 @@ export default {
   background-color: transparent;
   border: 5px solid black;
   border-radius: 15px;
-  height: 100vh;
+  min-height: 100vh;
+  height: auto; 
 }
+
 
 
 .v-list-item {
